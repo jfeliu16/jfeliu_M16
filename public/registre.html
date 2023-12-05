@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>APP HIGIENE BUCODENTAL - Registrarse</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="icon" type="image/x-icon" href="./imatges/favicon.png">
+    <style>
+        /* Estilos para el formulario de registro */
+        .registration-form {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .btn-primary {
+            margin-top: 10px;
+        }
+
+        .back {
+            background-color: gray;
+            border-color: grey;
+        }
+
+        .back:hover {
+            background-color: rgb(113, 113, 113);
+            border-color: rgb(113, 113, 113);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <div class="registration-form">
+            <h2 class="text-center mb-4">REGISTRE</h2>
+            <form action="/registre" method="post">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Nom" name="name" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Cognoms" name="cognoms" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Correu elécronic" name="correu" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control"  id="password" placeholder="Contrasenya" name="password" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control"  id="password2" placeholder="Confirmar contrasenya" name="password2"
+                        required>
+                </div id="error-messages">
+                <button type="submit" class="btn btn-primary btn-block">Registrar-se</button>
+            </form>
+            <a href="/" class="btn btn-primary btn-block back">Tornar</a>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrap..."></script>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function (event) {
+            const password = document.getElementById('password').value;
+            const password2 = document.getElementById('password2').value;
+
+            if (password !== password2) {
+                alert('Les contrassenyes no coincideixen.');
+                event.preventDefault(); // Detener el envío del formulario
+            }
+        });
+    </script>
+
+</body>
+
+</html>
