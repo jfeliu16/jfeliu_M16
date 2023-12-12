@@ -2,7 +2,7 @@
         .btn-circle {
             width: 350px;
             height: 350px;
-            border-radius: 50%;
+            border-radius: 5%;
             /* Hace que los botones sean círculos */
             font-size: 35px;
             display: flex;
