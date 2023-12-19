@@ -109,7 +109,9 @@ app.get('/identifica', (req, res) => {
   res.sendFile(__dirname + '/public/identifica.html');
 });
 
-
+app.get('/home', (req, res) => {
+  res.sendFile(__dirname + '/public/home.html');
+});
 
 
 // Example of using the connection pool in your route handlers
