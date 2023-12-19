@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Roulette Wheel</title>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        #roulette {
+            width: 200px;
+            height: 200px;
+            background-color: #f2f2f2;
+            border-radius: 50%;
+            position: relative;
+            animation: spin 4s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="roulette"></div>
+<button onclick="rollRoulette()">Roll</button>
+
+<script>
+    function rollRoulette() {
+        // You can add logic here to handle the roll event
+        // For simplicity, we'll just reset the animation duration
+        const roulette = document.getElementById('roulette');
+        roulette.style.animationDuration = '4s'; // Reset animation duration
+    }
+</script>
+
+</body>
+</html>

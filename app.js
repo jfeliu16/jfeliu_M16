@@ -56,37 +56,34 @@ app.get('/registre', (req, res) => {
   res.sendFile(__dirname + '/public/registre.html');
 });
 
-app.get('/casos.html', (req, res) => {
-    // Parse the question index from the query parameters
-    const currentQuestionIndex = parseInt(req.query.question || 0, 10);
+app.get('/casos', (req, res) => {
+// Realiza la consulta a la base de datos para obtener las preguntas
+pool.getConnection((err, connection) => {
+  if (err) {
+      console.error('Error getting connection from pool:', err);
+      return res.status(500).send('Internal server error');
+  }
 
-    // Render the casos.ejs template with the current question index
-    res.render('casos', { preguntas, currentQuestionIndex });
-});
+  // Realiza la consulta para obtener las preguntas
+  connection.query('SELECT * FROM M16_jaume.QuestionTree LIMIT 1;', (queryErr, preguntas) => {
+      // Release the connection back to the pool
+      connection.release();
 
-
-app.get('/caries', (req, res) => {
-  // Realiza la consulta a la base de datos para obtener las preguntas
-  pool.getConnection((err, connection) => {
-      if (err) {
-          console.error('Error getting connection from pool:', err);
+      if (queryErr) {
+          console.error('Database query error:', queryErr);
           return res.status(500).send('Internal server error');
       }
 
-      // Realiza la consulta para obtener las preguntas
-      connection.query('SELECT * FROM M16_jaume.QuestionTree LIMIT 1;', (queryErr, preguntas) => {
-          // Release the connection back to the pool
-          connection.release();
-
-          if (queryErr) {
-              console.error('Database query error:', queryErr);
-              return res.status(500).send('Internal server error');
-          }
-
-          // Renderiza la vista casos.ejs y pasa las preguntas como datos
-          res.render('caries', { preguntas: preguntas });
-      });
+      // Renderiza la vista casos.ejs y pasa las preguntas como datos
+      res.render('caries', { preguntas: preguntas });
   });
+});
+});
+
+
+
+app.get('/caries', (req, res) => {
+  
 });
 
 
@@ -102,6 +99,14 @@ app.get('/', (req, res) => {
 app.get('/style.css', (req, res) => {
   res.header('Content-Type', 'text/css');
   res.sendFile(__dirname + '/public/style.css');
+});
+
+app.get('/practiquem', (req, res) => {
+  res.sendFile(__dirname + '/public/practiquem.html');
+});
+
+app.get('/identifica', (req, res) => {
+  res.sendFile(__dirname + '/public/identifica.html');
 });
 
 
