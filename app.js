@@ -65,7 +65,7 @@ pool.getConnection((err, connection) => {
   }
 
   // Realiza la consulta para obtener las preguntas
-  connection.query('SELECT * FROM M16_jaume.QuestionTree LIMIT 1;', (queryErr, preguntas) => {
+  connection.query('SELECT * FROM M16_jaume.QuestionTree;', (queryErr, preguntas) => {
       // Release the connection back to the pool
       connection.release();
 
