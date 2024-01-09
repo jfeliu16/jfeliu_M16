@@ -1,66 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Database Quiz App</title>
-    <style>
-        #quiz-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-    </style>
-</head>
+    <head>
+        <title>APP HIGIENE BUCODENTAL</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="./style.css">
+        <link rel="icon" type="image/x-icon"
+            href="https://i0.wp.com/clinicaortodonciasoler.com/wp-content/uploads/2015/09/favicon.png?resize=300%2C300&ssl=1">
+            <style>
+                /* Add custom styles for the buttons */
+                .answer-btn {
+                    margin: 10px;
+                    padding: 20px;
+                    cursor: pointer;
+                    font-size: 16px; /* Adjust font size */
+                    width: 10%;
+                }
+
+                .container {
+                    margin-top: 5%;
+                }
+            </style>
+    </head>
 <body>
+    <div class="title-container">
+        <h1 class="title">PROJECTE APP HIGIENE BUCODENTAL</h1>
+    </div>
 
-<div id="quiz-container">
-    <h1>Quiz Time!</h1>
-    <div id="question-container"></div>
-    <input type="text" id="answer-input" placeholder="Your Answer">
-    <button onclick="checkAnswer()">Submit Answer</button>
-</div>
+    <div class="container">
+        <div class="row">
+            <!-- Left part with image -->
+            <div class="col-md-6">
+                <img src="path/to/your/image.jpg" alt="Your Image" class="img-fluid">
+            </div>
 
-<script>
-    let currentQuestionIndex = 0;
-    let questions = [];
+            <!-- Right part with text and questions -->
+            <div class="col-md-6">
+               
 
-    async function fetchQuestions() {
-        const response = await fetch('api/getQuestions'); // Replace with your API endpoint
-        const data = await response.json();
-        questions = data.questions;
-        loadQuestion();
-    }
+                <div id="quiz-container">
+                    <div id="question-container"></div>
+                    <button class="answer-btn" onclick="checkAnswer(0)"></button>
+                    <button class="answer-btn" onclick="checkAnswer(1)"></button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    function loadQuestion() {
-        const questionContainer = document.getElementById('question-container');
-        questionContainer.innerHTML = questions[currentQuestionIndex].QuestionText;
-    }
+    <script>
+        let currentQuestionIndex = 0;
+        let questions = [];
 
-    async function checkAnswer() {
-        const userAnswer = document.getElementById('answer-input').value.toLowerCase();
-        const correctAnswer = questions[currentQuestionIndex].CorrectAnswerID;
-
-        if (userAnswer === correctAnswer.toString()) {
-            alert("Correct! Moving to the next question.");
-            currentQuestionIndex++;
-
-            if (currentQuestionIndex < questions.length) {
-                loadQuestion();
-            } else {
-                alert("Congratulations! You've completed the quiz.");
-                // You can redirect the user or show a completion message here
-            }
-        } else {
-            alert("Incorrect! Try again.");
+        async function fetchQuestions() {
+            const response = await fetch('api/getQuestions'); // Replace with your API endpoint
+            const data = await response.json();
+            questions = data.questions;
+            loadQuestion();
         }
-    }
 
-    // Initial load
-    fetchQuestions();
-</script>
+        function loadQuestion() {
+            const questionContainer = document.getElementById('question-container');
+            questionContainer.innerHTML = questions[currentQuestionIndex].QuestionText;
+
+            const answerButtons = document.querySelectorAll('.answer-btn');
+            answerButtons[0].innerText = questions[currentQuestionIndex].answers[0].AnswerText;
+            answerButtons[1].innerText = questions[currentQuestionIndex].answers[1].AnswerText;
+        }
+
+        function checkAnswer(selectedIndex) {
+            const correctAnswerIndex = questions[currentQuestionIndex].CorrectAnswerIndex;
+
+            if (selectedIndex === correctAnswerIndex) {
+                alert("Correct! Moving to the next question.");
+                currentQuestionIndex++;
+
+                if (currentQuestionIndex < questions.length) {
+                    loadQuestion();
+                } else {
+                    alert("Congratulations! You've completed the quiz.");
+                }
+            } else {
+                alert("Incorrect! Try again.");
+            }
+        }
+
+        // Initial load
+        fetchQuestions();
+    </script>
 
 </body>
 </html>

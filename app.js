@@ -57,33 +57,12 @@ app.get('/registre', (req, res) => {
 });
 
 app.get('/casos', (req, res) => {
-  res.sendFile(__dirname + '/public/prova.html');
+  res.sendFile(__dirname + '/public/casos.html');
 });
-
 
 
 app.get('/caries', (req, res) => {
-// Realiza la consulta a la base de datos para obtener las preguntas
-pool.getConnection((err, connection) => {
-  if (err) {
-      console.error('Error getting connection from pool:', err);
-      return res.status(500).send('Internal server error');
-  }
-
-  // Realiza la consulta para obtener las preguntas
-  connection.query('SELECT * FROM M16_jaume.QuestionTree;', (queryErr, preguntas) => {
-      // Release the connection back to the pool
-      connection.release();
-
-      if (queryErr) {
-          console.error('Database query error:', queryErr);
-          return res.status(500).send('Internal server error');
-      }
-
-      // Renderiza la vista casos.ejs y pasa las preguntas como datos
-      res.render('caries', { preguntas: preguntas });
-  });
-});
+  res.sendFile(__dirname + '/public/prova.html');
 });
 
 
@@ -146,34 +125,65 @@ app.post('/login', (req, res) => {
   });
 });
 
+
+
 app.post('/registre', (req, res) => {
   const { username, name, cognoms, correu, password, password2 } = req.body;
 
-  if (password === password2) {
-    // Passwords match, proceed with the insertion
-    // Get a connection from the pool
-    pool.getConnection((err, connection) => {
-      if (err) {
-        console.error('Error getting connection from pool:', err);
+  // Use the pool to execute the query
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.error('Error getting connection from pool:', err);
+      return res.status(500).send('Internal server error');
+    }
+
+    // Use the connection to execute the query
+    connection.query('SELECT * FROM Usuaris WHERE nomUsuari = ?', [username], (queryErr, results) => {
+      // Release the connection back to the pool
+      connection.release();
+
+      if (queryErr) {
+        console.error('Database query error:', queryErr);
         return res.status(500).send('Internal server error');
       }
 
-      // Use the connection to execute the query
-      connection.query("INSERT INTO Usuaris (nomUsuari, nom, cognoms, correu, contrasenya) VALUES (?, ?, ?, ?, ?)", [username, name, cognoms, correu, password], (queryErr, results) => {
-        // Release the connection back to the pool
-        connection.release();
+      // Check if the username already exists
+      if (results.length > 0) {
+        showToast('Error: Usuari ja existent. Torna a provar.', true);
+      } else {
+        // If the username doesn't exist, proceed with password validation and insertion
+        if (password === password2) {
+          // Get another connection from the pool
+          pool.getConnection((insertionErr, insertConnection) => {
+            if (insertionErr) {
+              console.error('Error getting connection from pool:', insertionErr);
+              return res.status(500).send('Internal server error');
+            }
 
-        if (queryErr) {
-          console.error('Database query error:', queryErr);
-          return res.status(500).send('Internal server error');
+            // Use the connection to execute the query
+            insertConnection.query("INSERT INTO Usuaris (nomUsuari, nom, cognoms, correu, contrasenya) VALUES (?, ?, ?, ?, ?)", [username, name, cognoms, correu, password], (insertQueryErr, insertResults) => {
+              // Release the connection back to the pool
+              insertConnection.release();
+
+              if (insertQueryErr) {
+                console.error('Database query error:', insertQueryErr);
+                return res.status(500).send('Internal server error');
+              }
+
+              // Redirect or send the appropriate response after successful registration
+              res.sendFile(__dirname + '/public/index.html');
+            });
+          });
+        } else {
+          showToast('Error: Les contrasenyes no coincideixen. Torna a provar.', true);
+          res.redirect('/register?error=' + encodeURIComponent('Les contrasenyes no coincideixen. Torna a provar.'));
         }
-
-        // ... rest of your code
-        res.sendFile(__dirname + '/public/index.html');
-      });
+      }
     });
-  }
+  });
 });
+
+
 
 
 
@@ -229,3 +239,8 @@ app.post('/addQuestion', upload.single('image'), (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+
+function showToast(message, isError = false) {
+  console.log(message);
+}
