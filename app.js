@@ -57,6 +57,12 @@ app.get('/registre', (req, res) => {
 });
 
 app.get('/casos', (req, res) => {
+  res.sendFile(__dirname + '/public/prova.html');
+});
+
+
+
+app.get('/caries', (req, res) => {
 // Realiza la consulta a la base de datos para obtener las preguntas
 pool.getConnection((err, connection) => {
   if (err) {
@@ -78,12 +84,6 @@ pool.getConnection((err, connection) => {
       res.render('caries', { preguntas: preguntas });
   });
 });
-});
-
-
-
-app.get('/caries', (req, res) => {
-  
 });
 
 
@@ -177,6 +177,22 @@ app.post('/registre', (req, res) => {
 
 
 
+// API endpoint to get questions
+app.get('/api/getQuestions', (req, res) => {
+  const query = 'SELECT * FROM QuestionTree';
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching questions:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+      return;
+    }
+    res.json({ questions: results });
+  });
+});
+
+
+
+
 // Ruta para manejar la inserción de preguntas
 app.post('/addQuestion', upload.single('image'), (req, res) => {
   const { questionText, parentQuestionID, correctAnswerID, incorrectAnswerID, explicacio } = req.body;
@@ -208,6 +224,7 @@ app.post('/addQuestion', upload.single('image'), (req, res) => {
     );
   });
 });
+
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
