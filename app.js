@@ -217,8 +217,8 @@ app.post('/addQuestion', upload.single('image'), (req, res) => {
 
     // Utilizar la conexión para ejecutar la consulta de inserción
     connection.query(
-      'INSERT INTO QuestionTree (QuestionText, ParentQuestionID, CorrectAnswerID, IncorrectAnswerID, imatge, Explicacio) VALUES (?, ?, ?, ?, ?, ?)',
-      [questionText, parentQuestionID, correctAnswerID, incorrectAnswerID, image, explicacio],
+      'INSERT INTO QuestionTree (QuestionText, ParentQuestionID, CorrectAnswer, IncorrectAnswer, imatge, Explicacio) VALUES (?, ?, ?, ?, ?, ?)',
+      [questionText, parentQuestionID, correctAnswer, incorrectAnswer, image, explicacio],
       (queryErr, results) => {
         // Liberar la conexión de nuevo a la pool
         connection.release();
