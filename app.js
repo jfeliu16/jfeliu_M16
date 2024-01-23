@@ -62,17 +62,12 @@ app.get('/casos', (req, res) => {
 
 
 app.get('/caries', (req, res) => {
-  res.sendFile(__dirname + '/public/prova.html');
+  res.sendFile(__dirname + '/public/caries.html');
 });
 
 
 app.get('/crearpreguntes', (req, res) => {
   res.sendFile(__dirname + '/public/crearpreguntes.html');
-});
-
-
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/public/casos.html');
 });
 
 app.get('/style.css', (req, res) => {
@@ -171,7 +166,7 @@ app.post('/registre', (req, res) => {
               }
 
               // Redirect or send the appropriate response after successful registration
-              res.sendFile(__dirname + '/public/index.html');
+              res.sendFile(__dirname + '/public/crearpreguntes.html');
             });
           });
         } else {
@@ -203,10 +198,56 @@ app.get('/api/getQuestions', (req, res) => {
 
 
 
+// Add this route to your server code
+app.get('/getImage/:questionID', (req, res) => {
+  const questionID = req.params.questionID;
+
+  // Fetch the image data from the database based on the questionID
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.error('Error getting connection from pool:', err);
+      return res.status(500).send('Internal server error');
+    }
+
+    // Use the connection to execute the query
+    connection.query('SELECT Imatge FROM QuestionTree WHERE QuestionID = ?', [questionID], (queryErr, results) => {
+      // Release the connection back to the pool
+      connection.release();
+
+      if (queryErr) {
+        console.error('Database query error:', queryErr);
+        return res.status(500).send('Internal server error');
+      }
+
+      // Check if results were found
+      if (results.length === 1) {
+        // Send the BLOB data as the image response
+        const imageBuffer = results[0].imatge;
+        res.writeHead(200, {
+          'Content-Type': 'image/jpeg', // Adjust the content type based on your image type
+          'Content-Length': imageBuffer.length,
+        });
+        res.end(imageBuffer, 'binary');
+      } else {
+        // Handle case where no image is found
+        res.status(404).send('Image not found');
+      }
+    });
+  });
+});
+
+
+
+
+
+
 // Ruta para manejar la inserción de preguntas
 app.post('/addQuestion', upload.single('image'), (req, res) => {
-  const { questionText, parentQuestionID, correctAnswerID, incorrectAnswerID, explicacio } = req.body;
+  const { questionText, parentQuestionID, correctAnswer, incorrectAnswer, explicacio } = req.body;
   const image = req.file ? req.file.buffer : null;
+
+  // Convert empty string to null for parentQuestionID
+  const sanitizedParentQuestionID = parentQuestionID === '' ? null : parentQuestionID;
 
   // Obtener una conexión del pool
   pool.getConnection((err, connection) => {
@@ -218,7 +259,7 @@ app.post('/addQuestion', upload.single('image'), (req, res) => {
     // Utilizar la conexión para ejecutar la consulta de inserción
     connection.query(
       'INSERT INTO QuestionTree (QuestionText, ParentQuestionID, CorrectAnswer, IncorrectAnswer, imatge, Explicacio) VALUES (?, ?, ?, ?, ?, ?)',
-      [questionText, parentQuestionID, correctAnswer, incorrectAnswer, image, explicacio],
+      [questionText, sanitizedParentQuestionID, correctAnswer, incorrectAnswer, image, explicacio],
       (queryErr, results) => {
         // Liberar la conexión de nuevo a la pool
         connection.release();
@@ -229,11 +270,12 @@ app.post('/addQuestion', upload.single('image'), (req, res) => {
         }
 
         // Redirigir o responder según sea necesario
-        res.redirect('/'); // Cambia a la página que desees después de la inserción exitosa
+        res.redirect('/crearpreguntes'); // Cambia a la página que desees después de la inserción exitosa
       }
     );
   });
 });
+
 
 
 app.listen(port, () => {

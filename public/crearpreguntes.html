@@ -4,6 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Formulario de Preguntas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="icon" type="image/x-icon" href="https://i0.wp.com/clinicaortodonciasoler.com/wp-content/uploads/2015/09/favicon.png?resize=300%2C300&ssl=1">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -49,28 +54,30 @@
 
 <body>
     <form action="/addQuestion" method="post" enctype="multipart/form-data">
-        <label for="questionText">Texto de la Pregunta:</label>
-        <textarea id="questionText" name="questionText" required></textarea>
+        <h2>CREAR CAS</h2>
+        <label for="questionText">Text de la Pregunta:</label>
+        <input class="form-control" type="text" id="questionText" name="questionText" required></input>
 
-        <label for="parentQuestionID">ID de Pregunta pare (si aplica):</label>
-        <input type="text" id="parentQuestionID" name="parentQuestionID">
+        <label for="parentQuestionID">ID de pregunta pare (si aplica):</label>
+        <input class="form-control" type="text" id="parentQuestionID" name="parentQuestionID">
 
-        <label for="correctAnswer">Respuesta Correcta:</label>
-        <input type="text" id="correctAnswer" name="correctAnswer" required>
+        <label for="correctAnswer">Resposta Correcta:</label>
+        <input class="form-control" type="text" id="correctAnswer" name="correctAnswer" required>
 
-        <label for="incorrectAnswer">Respuesta Incorrecta:</label>
-        <input type="text" id="incorrectAnswer" name="incorrectAnswer" required>
+        <label for="incorrectAnswer">Resposta Incorrecta:</label>
+        <input class="form-control" type="text" id="incorrectAnswer" name="incorrectAnswer" required>
 
-        <label for="image">Imagen:</label>
+        <label for="image">Imatge:</label>
         <input type="file" id="image" name="image">
 
-        <label for="explicacio">Explicación:</label>
+        <label for="explicacio">Explicació:</label>
         <textarea id="explicacio" name="explicacio"></textarea>
+        <div class="col-md-12 text-center">
+            <button type="submit" >Afegir cas</button>
 
-        <button type="submit">Agregar Pregunta</button>
-
-        <a class="back-button" href="javascript:history.back()">Tornar</a>
-    </form>
+            <a class="back-button" href="javascript:history.back()">Tornar</a>
+        </div>
+        </form>
 
 </body>
 
