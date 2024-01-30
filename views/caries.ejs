@@ -1,9 +1,11 @@
+<!-- views/index.ejs -->
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
     <title>APP HIGIENE BUCODENTAL</title>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="./style.css">
     <link rel="icon" type="image/x-icon"
@@ -70,12 +72,26 @@
         background-color: #007bff;
         color: #fff;
     }
+    
+    .imagen-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .imagen {
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
 </style>
 
 <body>
     <div class="container-fluid">
         <div class="image-container">
-            <img src="/getImage/<%= preguntas[0].QuestionID %>" alt="Imagen grande">
+            <img class="imagen" src="../imatges/favicon.png" alt="Imagen">
         </div>
         <div class="text-container">
             <h1><%= preguntas[0].QuestionText %></h1>
@@ -86,9 +102,9 @@
                 <% }); %>
             </ul>
             <div class="btn-container">
-                <button id="btnOpcio1" type="button" class="btn btn-primary btn-lg btn-default">PREVENCIÓ</button>
+                <button id="btnOpcio1" type="button" class="btn btn-primary btn-lg btn-default"><%= preguntas[0].CorrectAnswer %></button>
                 <button id="btnOpcio2" type="button" class="btn btn-primary btn-lg btn-default" data-toggle="modal"
-                    data-target="#miDialogo">TRACTAMENT</button>
+                    data-target="#miDialogo"><%= preguntas[0].IncorrectAnswer %></button>
             </div>
         </div>
     </div>
@@ -97,7 +113,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="miDialogoLabel">Resposta incorrecte</h5>
-                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Cerrar"></button>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Tencar"></button>
                 </div>
                 <div class="modal-body">
                     <p><%= preguntas[0].Explicacio %></p>
@@ -108,30 +124,53 @@
             </div>
         </div>
     </div>
-
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-    <script>
-        // Función que se ejecuta al hacer clic en el botón
-        function redirectOpcio1() {
-            window.location.href = 'prevencio.html';
-        }
 
-        // Asociar la función al clic del botón
-        document.getElementById('btnOpcio1').addEventListener('click', redirectOpcio1);
 
-        // Cambiar el color de los botones cuando se muestra el diálogo
-        $('#miDialogo').on('show.bs.modal', function () {
-            // Cambiar el color del botón PREVENCIÓ a verde
-            $('#btnOpcio1').removeClass('btn-default').addClass('btn-green');
+<!-- Add this script section at the end of your HTML, before the closing </body> tag -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script>
+    $(document).ready(function () {
+        // Action when the correct answer button is clicked
+        $('#btnOpcio1').on('click', function () {
+            // You can customize the action here, for now, let's show an alert
+            Swal.fire({
+                icon: 'success',
+                title: 'Correct Answer!',
+                text: 'Molt bé! 👍',
+            });
 
-            // Cambiar el color del botón TRACTAMENT a rojo
-            $('#btnOpcio2').removeClass('btn-default').addClass('btn-red');
+            // Additional action to signal app.js and reload the page
+            // You can replace this with your actual logic to send a signal to app.js
+            // and handle the page reload accordingly
+            // For example, you can use AJAX to send a request to app.js
+
+            // Reload the page after 2 seconds
+            setTimeout(function () {
+                location.reload();
+            }, 2000);
         });
-    </script>
 
-</body>
+        // Action when the incorrect answer button is clicked
+        $('#btnOpcio2').on('click', function () {
+            // You can customize the action here, for now, let's show the modal
+            $('#miDialogo').modal('show');
+        });
+    });
 
+        // Action when the incorrect answer button is clicked
+        $('#btnOpcio2').on('click', function () {
+            Swal.fire({
+                title: 'Resposta Incorrecte!',
+                text: '<%= preguntas[0].Explicacio %>',
+            });
+            $('#miDialogo').modal('show');
+        });
+</script>
+
+
+
+    </body>
 </html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario de Preguntas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="icon" type="image/x-icon" href="https://i0.wp.com/clinicaortodonciasoler.com/wp-content/uploads/2015/09/favicon.png?resize=300%2C300&ssl=1">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <form action="/addCase" method="post" enctype="multipart/form-data">
+        <h2>CREAR CAS</h2>
+        <label for="casName">Nom del cas:</label>
+        <input class="form-control" type="text" id="casName" name="casName" required></input>
+
+        <label for="Descripcio">Descripcio: </label>
+        <input class="form-control" type="text" id="Descripcio" name="Descripcio" required>
+
+        <div class="col-md-12 text-center">
+            <button type="submit" >Afegir cas</button>
+
+            <a class="back-button" href="javascript:history.back()">Tornar</a>
+        </div>
+    </form>
+
+</body>
+
+</html>

@@ -61,14 +61,67 @@ app.get('/casos', (req, res) => {
 });
 
 
-app.get('/caries', (req, res) => {
-  res.sendFile(__dirname + '/public/caries.html');
+
+
+
+
+
+
+
+// Make the FillID parameter optional by adding '?' at the end
+app.get('/caries/:fillId', (req, res) => {
+  // Retrieve the FillID from the request parameters or set a default value
+  const fillId = req.params.fillId; // Assuming a default FillID of 1
+
+  // Query the database to get questions based on FillID
+  db.query('SELECT * FROM QuestionTree WHERE FillID = ?', [fillId], (err, results) => {
+      if (err) {
+          console.error('Error fetching questions:', err);
+          return res.status(500).send('Internal Server Error');
+      }
+
+      if (!results || results.length === 0) {
+          console.error('No questions found in the database.');
+          return res.status(404).send('Questions not found');
+      }
+
+      const preguntas = results.map(question => ({
+          QuestionID: question.QuestionID,
+          QuestionText: question.QuestionText,
+          CorrectAnswer: question.CorrectAnswer,
+          IncorrectAnswer: question.IncorrectAnswer,
+          Image: question.Imatge ? question.Imatge.toString('base64') : null,
+          Explicacio: question.Explicacio,
+          FillID: question.fillId,
+          // Add other properties as needed
+      }));
+
+      // Render the view with the retrieved questions
+      res.render('caries.ejs', { preguntas });
+  });
 });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.get('/crearCas', (req, res) => {
+  res.sendFile(__dirname + '/public/crearcas.html');
+});
 
 app.get('/crearpreguntes', (req, res) => {
   res.sendFile(__dirname + '/public/crearpreguntes.html');
 });
+
 
 app.get('/style.css', (req, res) => {
   res.header('Content-Type', 'text/css');
@@ -182,19 +235,6 @@ app.post('/registre', (req, res) => {
 
 
 
-// API endpoint to get questions
-app.get('/api/getQuestions', (req, res) => {
-  const query = 'SELECT * FROM QuestionTree';
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error('Error fetching questions:', err);
-      res.status(500).json({ error: 'Internal Server Error' });
-      return;
-    }
-    res.json({ questions: results });
-  });
-});
-
 
 
 
@@ -260,6 +300,41 @@ app.post('/addQuestion', upload.single('image'), (req, res) => {
     connection.query(
       'INSERT INTO QuestionTree (QuestionText, ParentQuestionID, CorrectAnswer, IncorrectAnswer, imatge, Explicacio) VALUES (?, ?, ?, ?, ?, ?)',
       [questionText, sanitizedParentQuestionID, correctAnswer, incorrectAnswer, image, explicacio],
+      (queryErr, results) => {
+        // Liberar la conexión de nuevo a la pool
+        connection.release();
+
+        if (queryErr) {
+          console.error('Error en la consulta de la base de datos:', queryErr);
+          return res.status(500).send('Error interno del servidor');
+        }
+
+        // Redirigir o responder según sea necesario
+        res.redirect('/crearpreguntes'); // Cambia a la página que desees después de la inserción exitosa
+      }
+    );
+  });
+});
+
+
+
+
+
+app.post('/addCase', (req, res) => {
+  const { casName, Descripcio} = req.body;
+
+  // Obtener una conexión del pool
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.error('Error al obtener conexión de la pool:', err);
+      return res.status(500).send('Error interno del servidor');
+    }
+
+    console.log(casName, Descripcio);
+    // Utilizar la conexión para ejecutar la consulta de inserción
+    connection.query(
+      'INSERT INTO Cassos (Nom_cas, Descripcio) VALUES (?, ?)',
+      [casName, Descripcio],
       (queryErr, results) => {
         // Liberar la conexión de nuevo a la pool
         connection.release();
