@@ -4,9 +4,7 @@ const bodyParser = require('body-parser');
 const dotenv = require('dotenv').config();
 const multer = require('multer');
 const app = express();
-
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+const fs = require('fs');
 
 const port = process.env.PORT;
 
@@ -20,6 +18,19 @@ const pool = mysql.createPool({
   connectionLimit: 10,
   queueLimit: 0,
 });
+
+// Configuración de multer para gestionar la carga de archivos
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // Carpeta donde se guardarán las imágenes ***S'ha de crear la carpeta al servidor, sinó falla
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
+
 
 // Middleware setup
 app.use(express.static(__dirname + '/'));
@@ -69,12 +80,12 @@ app.get('/casos', (req, res) => {
 
 
 // Make the FillID parameter optional by adding '?' at the end
-app.get('/caries/:fillId', (req, res) => {
+app.get('/caries/:FillID', (req, res) => {
   // Retrieve the FillID from the request parameters or set a default value
-  const fillId = req.params.fillId; // Assuming a default FillID of 1
+  const FillID = req.params.FillID; // Assuming a default FillID of 1
 
   // Query the database to get questions based on FillID
-  db.query('SELECT * FROM QuestionTree WHERE FillID = ?', [fillId], (err, results) => {
+  db.query('SELECT * FROM QuestionTree WHERE QuestionID = ?', [FillID], (err, results) => {
       if (err) {
           console.error('Error fetching questions:', err);
           return res.status(500).send('Internal Server Error');
@@ -92,7 +103,7 @@ app.get('/caries/:fillId', (req, res) => {
           IncorrectAnswer: question.IncorrectAnswer,
           Image: question.Imatge ? question.Imatge.toString('base64') : null,
           Explicacio: question.Explicacio,
-          FillID: question.fillId,
+          FillID: question.FillID,
           // Add other properties as needed
       }));
 
@@ -219,7 +230,7 @@ app.post('/registre', (req, res) => {
               }
 
               // Redirect or send the appropriate response after successful registration
-              res.sendFile(__dirname + '/public/crearpreguntes.html');
+              res.sendFile(__dirname + '/public/');
             });
           });
         } else {
@@ -282,9 +293,9 @@ app.get('/getImage/:questionID', (req, res) => {
 
 
 // Ruta para manejar la inserción de preguntas
-app.post('/addQuestion', upload.single('image'), (req, res) => {
+app.post('/addQuestion', upload.single('imagen'), (req, res) => {
   const { questionText, parentQuestionID, correctAnswer, incorrectAnswer, explicacio } = req.body;
-  const image = req.file ? req.file.buffer : null;
+  const imagenPath = req.file.path;
 
   // Convert empty string to null for parentQuestionID
   const sanitizedParentQuestionID = parentQuestionID === '' ? null : parentQuestionID;
@@ -299,7 +310,7 @@ app.post('/addQuestion', upload.single('image'), (req, res) => {
     // Utilizar la conexión para ejecutar la consulta de inserción
     connection.query(
       'INSERT INTO QuestionTree (QuestionText, ParentQuestionID, CorrectAnswer, IncorrectAnswer, imatge, Explicacio) VALUES (?, ?, ?, ?, ?, ?)',
-      [questionText, sanitizedParentQuestionID, correctAnswer, incorrectAnswer, image, explicacio],
+      [questionText, sanitizedParentQuestionID, correctAnswer, incorrectAnswer, fs.readFileSync(imagenPath), explicacio],
       (queryErr, results) => {
         // Liberar la conexión de nuevo a la pool
         connection.release();

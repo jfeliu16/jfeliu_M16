@@ -86,21 +86,19 @@
       border: 1px solid #ddd;
       border-radius: 5px;
     }
+
 </style>
 
 <body>
     <div class="container-fluid">
         <div class="image-container">
-            <img class="imagen" src="../imatges/favicon.png" alt="Imagen">
+            <img src="data:image/jpeg;base64, <%= preguntas[0].Image %>" alt="Image">
         </div>
         <div class="text-container">
             <h1><%= preguntas[0].QuestionText %></h1>
-            <!-- Display answers dynamically -->
-            <ul>
                 <% preguntas.forEach((pregunta, index) => { %>
-                    <li><%= pregunta.AnswerText %></li>
+                    <%= preguntas[0].AnswerText %>
                 <% }); %>
-            </ul>
             <div class="btn-container">
                 <button id="btnOpcio1" type="button" class="btn btn-primary btn-lg btn-default"><%= preguntas[0].CorrectAnswer %></button>
                 <button id="btnOpcio2" type="button" class="btn btn-primary btn-lg btn-default" data-toggle="modal"
@@ -142,14 +140,15 @@
                 text: 'Molt bé! 👍',
             });
 
-            // Additional action to signal app.js and reload the page
-            // You can replace this with your actual logic to send a signal to app.js
-            // and handle the page reload accordingly
-            // For example, you can use AJAX to send a request to app.js
-
             // Reload the page after 2 seconds
             setTimeout(function () {
-                location.reload();
+                if ('<%= preguntas[0].FillID %>' !== '') {
+                    // Redirect to the specified FillID
+                    window.location.href = '<%= preguntas[0].FillID %>';
+                } else {
+                    // If FillID is empty, redirect to another page
+                    window.location.href = '/casos';
+                }
             }, 2000);
         });
 
