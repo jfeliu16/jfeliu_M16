@@ -79,6 +79,7 @@ app.get('/casos', (req, res) => {
 
 
 
+
 // Make the FillID parameter optional by adding '?' at the end
 app.get('/caries/:FillID', (req, res) => {
   // Retrieve the FillID from the request parameters or set a default value

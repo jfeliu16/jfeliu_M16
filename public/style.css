@@ -49,4 +49,11 @@
             margin-right: 50px;
         }
 
+        body {
+            background-image: url("../imatges/3E956035-A1F9-44C9-A650-58D857B1FAF7.png");
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+          }
         
